@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ENES DEVA BTC | Kayıt Paneli</title>
     <style>
-        body { background: #0a0a0a; color: #fff; font-family: 'Poppins', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: #151515; padding: 40px; border-radius: 20px; width: 350px; border-top: 5px solid #f39c12; box-shadow: 0 15px 35px rgba(0,0,0,0.7); }
-        h2 { text-align: center; color: #f39c12; letter-spacing: 2px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #333; background: #222; color: #fff; box-sizing: border-box; }
+        body { background: #0a0a0a; color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: #151515; padding: 40px; border-radius: 20px; width: 350px; border-top: 5px solid #f39c12; box-shadow: 0 15px 35px rgba(0,0,0,0.7); text-align: center; }
+        h2 { color: #f39c12; letter-spacing: 2px; margin-bottom: 5px; }
+        p { color: #888; font-size: 13px; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #333; background: #222; color: #fff; box-sizing: border-box; outline: none; }
+        input:focus { border-color: #f39c12; }
         button { width: 100%; padding: 12px; background: #f39c12; border: none; color: #000; font-weight: bold; border-radius: 10px; cursor: pointer; transition: 0.3s; margin-top: 15px; }
         button:hover { background: #e67e22; transform: translateY(-2px); }
     </style>
@@ -17,13 +19,13 @@
 
 <div class="container">
     <h2>ENES DEVA BTC</h2>
-    <p style="text-align: center; font-size: 12px; color: #888;">Yatırım Hesabınızı Oluşturun</p>
+    <p>Yatırım Hesabınızı Oluşturun</p>
     <input type="text" id="name" placeholder="Adınız">
     <input type="text" id="surname" placeholder="Soyadınız">
     <input type="text" id="city" placeholder="Yaşadığınız Yer">
-    <input type="email" id="email" placeholder="E-posta (Giriş için)">
+    <input type="email" id="email" placeholder="E-posta Adresi">
     <input type="password" id="pass" placeholder="Şifreniz">
-    <button onclick="kayitOl()">HESABI OLUŞTUR</button>
+    <button onclick="kayitOl()">HESABI OLUŞTUR VE BAŞLA</button>
 </div>
 
 <script type="module" src="app.js"></script>
