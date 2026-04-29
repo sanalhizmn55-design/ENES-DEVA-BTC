@@ -3,31 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENES DEVA BTC | Kayıt Paneli</title>
+    <title>ENES DEVA BTC | Giriş & Kayıt</title>
     <style>
-        body { background: #0a0a0a; color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: #151515; padding: 40px; border-radius: 20px; width: 350px; border-top: 5px solid #f39c12; box-shadow: 0 15px 35px rgba(0,0,0,0.7); text-align: center; }
-        h2 { color: #f39c12; letter-spacing: 2px; margin-bottom: 5px; }
-        p { color: #888; font-size: 13px; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #333; background: #222; color: #fff; box-sizing: border-box; outline: none; }
+        body { background: #0a0a0a; color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box;}
+        .container { background: #151515; padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; border-top: 5px solid #f39c12; box-shadow: 0 15px 35px rgba(0,0,0,0.7); text-align: center; }
+        h2 { color: #f39c12; letter-spacing: 2px; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #333; background: #222; color: #fff; box-sizing: border-box; outline: none; }
         input:focus { border-color: #f39c12; }
-        button { width: 100%; padding: 12px; background: #f39c12; border: none; color: #000; font-weight: bold; border-radius: 10px; cursor: pointer; transition: 0.3s; margin-top: 15px; }
+        button { width: 100%; padding: 12px; background: #f39c12; border: none; color: #000; font-weight: bold; border-radius: 10px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         button:hover { background: #e67e22; transform: translateY(-2px); }
+        .switch-btn { background: none; color: #f39c12; border: none; font-size: 13px; margin-top: 15px; text-decoration: underline; cursor: pointer; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>ENES DEVA BTC</h2>
-    <p>Yatırım Hesabınızı Oluşturun</p>
-    <input type="text" id="name" placeholder="Adınız">
-    <input type="text" id="surname" placeholder="Soyadınız">
-    <input type="text" id="city" placeholder="Yaşadığınız Yer">
-    <input type="email" id="email" placeholder="E-posta Adresi">
-    <input type="password" id="pass" placeholder="Şifreniz">
-    <button onclick="kayitOl()">HESABI OLUŞTUR VE BAŞLA</button>
+    
+    <div id="login-form">
+        <p>Hesabınıza Giriş Yapın</p>
+        <input type="email" id="login-email" placeholder="E-posta">
+        <input type="password" id="login-pass" placeholder="Şifre">
+        <button onclick="girisYap()">GİRİŞ YAP</button>
+        <button class="switch-btn" onclick="toggleForms()">Hesabınız yok mu? Kayıt Olun</button>
+    </div>
+
+    <div id="register-form" class="hidden">
+        <p>Yeni Yatırım Hesabı Açın</p>
+        <input type="text" id="reg-name" placeholder="Adınız">
+        <input type="text" id="reg-surname" placeholder="Soyadınız">
+        <input type="text" id="reg-city" placeholder="Şehir">
+        <input type="email" id="reg-email" placeholder="E-posta">
+        <input type="password" id="reg-pass" placeholder="Şifre">
+        <button onclick="kayitOl()">HESABI OLUŞTUR</button>
+        <button class="switch-btn" onclick="toggleForms()">Zaten hesabınız var mı? Giriş Yapın</button>
+    </div>
 </div>
 
+<script>
+    function toggleForms() {
+        document.getElementById('login-form').classList.toggle('hidden');
+        document.getElementById('register-form').classList.toggle('hidden');
+    }
+</script>
 <script type="module" src="app.js"></script>
 </body>
 </html>
