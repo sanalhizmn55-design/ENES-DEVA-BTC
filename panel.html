@@ -2,21 +2,38 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>ENES DEVA BTC | Hoş Geldiniz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENES DEVA BTC | Panel</title>
     <style>
-        body { background: #0a0a0a; color: #fff; font-family: sans-serif; text-align: center; padding-top: 100px; }
-        .card { background: #151515; border: 1px solid #f39c12; display: inline-block; padding: 40px; border-radius: 20px; box-shadow: 0 0 20px rgba(243, 156, 18, 0.2); }
-        h1 { color: #f39c12; margin-bottom: 10px; }
-        p { color: #ccc; line-height: 1.6; }
-        .status { margin-top: 20px; font-weight: bold; color: #27ae60; }
+        body { background: #0a0a0a; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }
+        .header { background: #151515; padding: 20px; border-bottom: 2px solid #f39c12; display: flex; justify-content: space-between; align-items: center; }
+        .bakiye-box { background: #1a1a1a; padding: 20px; border-radius: 15px; margin: 20px auto; max-width: 300px; border: 1px solid #f39c12; }
+        #bakiye-goster { font-size: 32px; color: #f39c12; display: block; font-weight: bold; }
+        .chart-container { width: 100%; max-width: 900px; margin: 20px auto; height: 500px; border-radius: 15px; overflow: hidden; border: 1px solid #333; }
+        button.exit { background: #c0392b; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
-<body>
-    <div class="card">
-        <h1>TEBRİKLER!</h1>
-        <p>Yatırım hesabınız başarıyla aktifleştirildi.</p>
-        <p>BTC bakiyeniz ve kâr oranlarınız <br> kısa süre içinde panelinize yansıtılacaktır.</p>
-        <div class="status">Hesap Durumu: Onaylandı ✅</div>
+<body onload="bakiyeGoster()">
+    <div class="header">
+        <span style="color:#f39c12; font-weight:bold;">ENES DEVA BTC</span>
+        <button class="exit" onclick="cikisYap()">Çıkış Yap</button>
     </div>
+
+    <div class="bakiye-box">
+        <span style="color:#888; font-size:14px;">TOPLAM VARLIK</span>
+        <span id="bakiye-goster">$0.00</span>
+    </div>
+
+    <div class="chart-container">
+        <div id="tv-chart" style="height:100%;"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+        <script type="text/javascript">
+            new TradingView.widget({
+                "autosize": true, "symbol": "BIST:DEVA", "interval": "D", "theme": "dark", "style": "1", "locale": "tr", "container_id": "tv-chart"
+            });
+        </script>
+    </div>
+
+    <script type="module" src="app.js"></script>
 </body>
 </html>
