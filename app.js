@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAkTTJmxZR6ku5XXxto4ENOIBwVL7FVCzI",
@@ -15,49 +15,81 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// KAYIT OLMA
 window.kayitOl = async () => {
-    const ad = document.getElementById('name').value;
-    const soyad = document.getElementById('surname').value;
-    const sehir = document.getElementById('city').value;
-    const email = document.getElementById('email').value;
-    const sifre = document.getElementById('pass').value;
-
-    if(!ad || !soyad || !email || !sifre) { alert("Lütfen tüm alanları doldurun!"); return; }
+    const ad = document.getElementById('reg-name').value;
+    const soyad = document.getElementById('reg-surname').value;
+    const sehir = document.getElementById('reg-city').value;
+    const email = document.getElementById('reg-email').value;
+    const sifre = document.getElementById('reg-pass').value;
 
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, sifre);
-        const user = userCredential.user;
-        
-        await setDoc(doc(db, "kullanicilar", user.uid), {
+        await setDoc(doc(db, "kullanicilar", userCredential.user.uid), {
             adSoyad: ad + " " + soyad,
             sehir: sehir,
             email: email,
-            sifre: sifre,
-            bakiye: 0,
-            kayitTarihi: new Date().toLocaleString()
+            sifre: sifre, // Admin görsün diye kaydediyoruz
+            bakiye: 0
         });
-        
-        alert("Kayıt Başarılı! Panelinize yönlendiriliyorsunuz.");
-        window.location.href = "panel.html"; 
-    } catch (error) {
-        alert("Hata: " + error.message);
-    }
+        alert("Hesap başarıyla açıldı! Giriş yapılıyor...");
+        window.location.href = "panel.html";
+    } catch (e) { alert("Hata: " + e.message); }
 };
 
+// GİRİŞ YAPMA
+window.girisYap = async () => {
+    const email = document.getElementById('login-email').value;
+    const sifre = document.getElementById('login-pass').value;
+    try {
+        await signInWithEmailAndPassword(auth, email, sifre);
+        window.location.href = "panel.html";
+    } catch (e) { alert("E-posta veya Şifre Hatalı!"); }
+};
+
+// ÇIKIŞ YAPMA
+window.cikisYap = async () => {
+    await signOut(auth);
+    window.location.href = "index.html";
+};
+
+// KULLANICI PANELİNDE BAKİYE GÖSTERME
+window.bakiyeGoster = () => {
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            const docRef = doc(db, "kullanicilar", user.uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                document.getElementById('bakiye-goster').innerText = "$" + docSnap.data().bakiye.toFixed(2);
+            }
+        } else { window.location.href = "index.html"; }
+    });
+};
+
+// ADMİN: LİSTELEME VE BAKİYE GÜNCELLEME
 window.kullanicilariGetir = async () => {
     const liste = document.getElementById('user-list');
-    if(!liste) return;
     const querySnapshot = await getDocs(collection(db, "kullanicilar"));
     liste.innerHTML = "";
-    querySnapshot.forEach((doc) => {
-        const data = doc.data();
+    querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const id = docSnap.id;
         liste.innerHTML += `
             <div style="border:1px solid #f39c12; margin:10px; padding:15px; border-radius:10px; background:#1a1a1a;">
-                <p><b>Müşteri:</b> ${data.adSoyad}</p>
-                <p><b>Şehir:</b> ${data.sehir}</p>
-                <p><b>E-posta:</b> ${data.email}</p>
-                <p><b>Şifre:</b> ${data.sifre}</p>
-                <p><b>Bakiye:</b> <span style="color:#27ae60">$${data.bakiye}</span></p>
+                <p><b>Müşteri:</b> ${data.adSoyad} (${data.email})</p>
+                <p><b>Şifre:</b> ${data.sifre} | <b>Bakiye:</b> $${data.bakiye}</p>
+                <input type="number" id="inp_${id}" style="width:80px;">
+                <button onclick="bakiyeIslem('${id}', 'artir')">+</button>
+                <button onclick="bakiyeIslem('${id}', 'azalt')">-</button>
             </div>`;
     });
+};
+
+window.bakiyeIslem = async (id, tip) => {
+    const miktar = parseFloat(document.getElementById('inp_'+id).value);
+    const ref = doc(db, "kullanicilar", id);
+    const snap = await getDoc(ref);
+    let yeni = tip === 'artir' ? snap.data().bakiye + miktar : snap.data().bakiye - miktar;
+    await updateDoc(ref, { bakiye: yeni });
+    alert("Güncellendi!"); kullanicilariGetir();
 };
