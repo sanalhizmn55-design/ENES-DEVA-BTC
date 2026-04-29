@@ -29,10 +29,10 @@ window.kayitOl = async () => {
             adSoyad: ad + " " + soyad,
             sehir: sehir,
             email: email,
-            sifre: sifre, // Admin görsün diye kaydediyoruz
+            sifre: sifre,
             bakiye: 0
         });
-        alert("Hesap başarıyla açıldı! Giriş yapılıyor...");
+        alert("Hesap başarıyla açıldı!");
         window.location.href = "panel.html";
     } catch (e) { alert("Hata: " + e.message); }
 };
@@ -53,14 +53,25 @@ window.cikisYap = async () => {
     window.location.href = "index.html";
 };
 
-// KULLANICI PANELİNDE BAKİYE GÖSTERME
+// KULLANICI PANELİNDE BAKİYE GÖSTERME VE PARA ÇEKME
 window.bakiyeGoster = () => {
     auth.onAuthStateChanged(async (user) => {
         if (user) {
             const docRef = doc(db, "kullanicilar", user.uid);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
-                document.getElementById('bakiye-goster').innerText = "$" + docSnap.data().bakiye.toFixed(2);
+                const bakiye = docSnap.data().bakiye;
+                document.getElementById('bakiye-goster').innerText = "$" + bakiye.toFixed(2);
+                
+                // Para Çekme Fonksiyonunu Butona Bağla
+                window.paraCek = () => {
+                    if(bakiye < 1000) {
+                        alert("Hata: Para çekebilmek için bakiyenizin en az $1000 olması gerekmektedir!");
+                    } else {
+                        const mesaj = encodeURIComponent(`Merhaba Enes Bey, hesabımda bulunan $${bakiye} tutarındaki bakiyemi çekmek istiyorum. İsim: ${docSnap.data().adSoyad}`);
+                        window.open(`https://wa.me/905518329861?text=${mesaj}`, '_blank');
+                    }
+                };
             }
         } else { window.location.href = "index.html"; }
     });
@@ -75,10 +86,10 @@ window.kullanicilariGetir = async () => {
         const data = docSnap.data();
         const id = docSnap.id;
         liste.innerHTML += `
-            <div style="border:1px solid #f39c12; margin:10px; padding:15px; border-radius:10px; background:#1a1a1a;">
-                <p><b>Müşteri:</b> ${data.adSoyad} (${data.email})</p>
-                <p><b>Şifre:</b> ${data.sifre} | <b>Bakiye:</b> $${data.bakiye}</p>
-                <input type="number" id="inp_${id}" style="width:80px;">
+            <div style="border:1px solid #f39c12; margin:10px; padding:15px; border-radius:10px; background:#1a1a1a; color:white;">
+                <p><b>Müşteri:</b> ${data.adSoyad}</p>
+                <p><b>Bakiye:</b> $${data.bakiye}</p>
+                <input type="number" id="inp_${id}" style="width:80px;" placeholder="Miktar">
                 <button onclick="bakiyeIslem('${id}', 'artir')">+</button>
                 <button onclick="bakiyeIslem('${id}', 'azalt')">-</button>
             </div>`;
@@ -91,5 +102,5 @@ window.bakiyeIslem = async (id, tip) => {
     const snap = await getDoc(ref);
     let yeni = tip === 'artir' ? snap.data().bakiye + miktar : snap.data().bakiye - miktar;
     await updateDoc(ref, { bakiye: yeni });
-    alert("Güncellendi!"); kullanicilariGetir();
+    alert("Bakiye Güncellendi!"); kullanicilariGetir();
 };
