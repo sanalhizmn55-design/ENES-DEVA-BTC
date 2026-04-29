@@ -22,17 +22,11 @@ window.kayitOl = async () => {
     const sehir = document.getElementById('reg-city').value;
     const email = document.getElementById('reg-email').value;
     const sifre = document.getElementById('reg-pass').value;
-
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, sifre);
         await setDoc(doc(db, "kullanicilar", userCredential.user.uid), {
-            adSoyad: ad + " " + soyad,
-            sehir: sehir,
-            email: email,
-            sifre: sifre,
-            bakiye: 0
+            adSoyad: ad + " " + soyad, sehir: sehir, email: email, sifre: sifre, bakiye: 0
         });
-        alert("Hesap başarıyla açıldı!");
         window.location.href = "panel.html";
     } catch (e) { alert("Hata: " + e.message); }
 };
@@ -44,16 +38,13 @@ window.girisYap = async () => {
     try {
         await signInWithEmailAndPassword(auth, email, sifre);
         window.location.href = "panel.html";
-    } catch (e) { alert("E-posta veya Şifre Hatalı!"); }
+    } catch (e) { alert("Hatalı Giriş!"); }
 };
 
-// ÇIKIŞ YAPMA
-window.cikisYap = async () => {
-    await signOut(auth);
-    window.location.href = "index.html";
-};
+// ÇIKIŞ
+window.cikisYap = async () => { await signOut(auth); window.location.href = "index.html"; };
 
-// KULLANICI PANELİNDE BAKİYE GÖSTERME VE PARA ÇEKME
+// BAKİYE VE İŞLEMLER
 window.bakiyeGoster = () => {
     auth.onAuthStateChanged(async (user) => {
         if (user) {
@@ -63,21 +54,22 @@ window.bakiyeGoster = () => {
                 const bakiye = docSnap.data().bakiye;
                 document.getElementById('bakiye-goster').innerText = "$" + bakiye.toFixed(2);
                 
-                // Para Çekme Fonksiyonunu Butona Bağla
+                // PARA ÇEKME
                 window.paraCek = () => {
-                    if(bakiye < 1000) {
-                        alert("Hata: Para çekebilmek için bakiyenizin en az $1000 olması gerekmektedir!");
-                    } else {
-                        const mesaj = encodeURIComponent(`Merhaba Enes Bey, hesabımda bulunan $${bakiye} tutarındaki bakiyemi çekmek istiyorum. İsim: ${docSnap.data().adSoyad}`);
-                        window.open(`https://wa.me/905518329861?text=${mesaj}`, '_blank');
-                    }
+                    if(bakiye < 1000) { alert("Min. çekim $1000!"); } 
+                    else { window.open(`https://wa.me/905518329861?text=Bakiye Cekme Talebi: ${docSnap.data().adSoyad}, Miktar: $${bakiye}`, '_blank'); }
+                };
+
+                // PARA YATIRMA (WhatsApp'a Yönlendirir)
+                window.paraYatiritir = () => {
+                    window.open(`https://wa.me/905518329861?text=Para Yatirmak Istiyorum. Isim: ${docSnap.data().adSoyad}`, '_blank');
                 };
             }
         } else { window.location.href = "index.html"; }
     });
 };
 
-// ADMİN: LİSTELEME VE BAKİYE GÜNCELLEME
+// ADMİN PANELİ FONKSİYONLARI
 window.kullanicilariGetir = async () => {
     const liste = document.getElementById('user-list');
     const querySnapshot = await getDocs(collection(db, "kullanicilar"));
@@ -87,11 +79,10 @@ window.kullanicilariGetir = async () => {
         const id = docSnap.id;
         liste.innerHTML += `
             <div style="border:1px solid #f39c12; margin:10px; padding:15px; border-radius:10px; background:#1a1a1a; color:white;">
-                <p><b>Müşteri:</b> ${data.adSoyad}</p>
-                <p><b>Bakiye:</b> $${data.bakiye}</p>
-                <input type="number" id="inp_${id}" style="width:80px;" placeholder="Miktar">
-                <button onclick="bakiyeIslem('${id}', 'artir')">+</button>
-                <button onclick="bakiyeIslem('${id}', 'azalt')">-</button>
+                <p><b>${data.adSoyad}</b> - $${data.bakiye}</p>
+                <input type="number" id="inp_${id}" style="width:70px;">
+                <button onclick="bakiyeIslem('${id}', 'artir')">Ekle</button>
+                <button onclick="bakiyeIslem('${id}', 'azalt')">Çıkar</button>
             </div>`;
     });
 };
@@ -102,5 +93,5 @@ window.bakiyeIslem = async (id, tip) => {
     const snap = await getDoc(ref);
     let yeni = tip === 'artir' ? snap.data().bakiye + miktar : snap.data().bakiye - miktar;
     await updateDoc(ref, { bakiye: yeni });
-    alert("Bakiye Güncellendi!"); kullanicilariGetir();
+    alert("Güncellendi!"); kullanicilariGetir();
 };
