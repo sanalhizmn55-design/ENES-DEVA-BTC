@@ -3,16 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>ENES DEVA BTC | Admin</title>
-    <style>
-        body { background: #121212; color: white; font-family: sans-serif; padding: 20px; }
-        h1 { color: #f39c12; }
-        button { padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-    </style>
+    <style>body { background: #121212; color: white; font-family: sans-serif; padding: 20px; } button { cursor: pointer; }</style>
 </head>
 <body>
-    <h1>ENES DEVA BTC - Yönetici Paneli</h1>
-    <button onclick="kullanicilariGetir()">Müşterileri Listele</button>
-    <div id="user-list" style="margin-top:20px;"></div>
+    <h1>Yönetici Paneli</h1>
+    <button onclick="kullanicilariGetir()" style="background:#27ae60; color:white; padding:10px;">KULLANICILARI LİSTELE</button>
+    <div id="user-list"></div>
     <script type="module" src="app.js"></script>
 </body>
 </html>
